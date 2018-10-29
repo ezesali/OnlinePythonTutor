@@ -13,11 +13,10 @@
 # compatibility from 2.x to 3.x Ii was running from /v3/).
 
 from bottle import route, get, request, run, template, static_file
-import StringIO # NB: don't use cStringIO since it doesn't support unicode!!!
+import io # NB: don't use cStringIO since it doesn't support unicode!!!
 import json
 import pg_logger
 import urllib
-import urllib2
 
 # dummy routes for testing only
 @route('/web_exec_<name:re:.+>.py')
@@ -38,7 +37,7 @@ def index(filepath):
 
 @get('/exec')
 def get_exec():
-  out_s = StringIO.StringIO()
+  out_s = io.io()
 
   def json_finalizer(input_code, output_trace):
     ret = dict(code=input_code, trace=output_trace)
@@ -106,8 +105,8 @@ if n_fail == 0:
   values = {'user_script' : script}
 
   data = urllib.urlencode(values)
-  req = urllib2.Request(url, data)
-  response = urllib2.urlopen(req)
+  req = urllib.Request(url, data)
+  response = urllib.urlopen(req)
   the_page = response.read()
   return the_page
 
